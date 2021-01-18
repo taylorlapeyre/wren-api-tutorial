@@ -1,9 +1,9 @@
-# Wren API Tutorial (Node.js)
-Create a sample offset order using Wren.co's API.
-wren.co/api
+# Wren API Tutorial (Web)
+
+This repo demonstrates how you might use Wren's API to build a web app. This uses vanilla JS, no frameworks, so that you can see how things work without them.
 
 ## Getting started
-- `npm install`
-- Create a .env file and enter your Wren API Token: WREN_API_TOKEN=xxx
-- Run `node app.js` to place a sample offset order for 1 ton of CO2!
 
+- Open index.html in your browser.
+- Enter your Wren API token on the page.
+- Use the offset tool!

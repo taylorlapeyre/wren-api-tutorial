@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wren API Example</title>
+  </head>
+  <body>
+    <div class="container">
+      <p>Enter your API token:</p>
+      <input type="text" id="api-token-input" />
+
+      <p>Choose a portfolio:</p>
+      <select id="portfolio-selector"></select>
+
+      <p>What amount of tons of CO2 would you like to offset?</p>
+      <input type="number" id="tons-input" placeholder="1" />
+
+      <button id="submit-button">Offset!</button>
+    </div>
+
+    <script>
+      const API_URL = "https://www.wren.co/api";
+
+      async function fetchPortfolios() {
+        const response = await fetch(`${API_URL}/portfolios`);
+        const responseBody = await response.json();
+        return responseBody.portfolios;
+      }
+
+      async function offsetCarbon({ portfolioId, tons, token }) {
+        const request = new Request(`${API_URL}/offset-orders`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tons,
+            portfolioId,
+            dryRun: true,
+          }),
+        });
+
+        const response = await fetch(request);
+        return response.json();
+      }
+
+      async function boot() {
+        const portfolioSelector = document.querySelector("#portfolio-selector");
+        const tonsInput = document.querySelector("#tons-input");
+        const submitButton = document.querySelector("#submit-button");
+        const apiTokenInput = document.querySelector('#api-token-input');
+
+        const portfolios = await fetchPortfolios();
+
+        const options = portfolios.map((portfolio) => {
+          const element = document.createElement("option");
+          element.value = portfolio.id;
+          element.innerHTML = portfolio.name;
+          return element;
+        });
+
+        portfolioSelector.append(...options);
+
+        submitButton.addEventListener("click", async () => {
+          const token = apiTokenInput.value;
+          const tons = parseFloat(tonsInput.value);
+          const portfolioId = portfolioSelector.value;
+
+          if (tons) {
+            const response = await offsetCarbon({ portfolioId, tons, token });
+            alert(`You have offset ${tons} tons of CO2!`);
+            tonsInput.value = "";
+          }
+        });
+      }
+
+      boot();
+    </script>
+  </body>
+</html>
